@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+taskdir=$HOME/.local/share/tasks
+pushd $taskdir >/dev/null
+
+details=$1
+if [[ -n "$details" ]] ; then
+    if echo $details | grep -q "\." ; then
+        path=""
+        pathsep="/tasks/"
+        array=${details//./ }  
+        for e in $(echo $array) ; do 
+            path=$(echo $path$e$pathsep)
+        done 
+        # take the last pathsep off
+        path=$(echo $path | sed -e 's!/tasks/$!!')
+    else 
+        path=$details
+    fi
+    if [[ -e $path/task ]] ; then cat $path/task ; fi 
+    if [[ -d $path/comments ]] ; then cat $path/comments/* ; fi
+    exit 0
+else 
+    for f in $(find . -name task | sort -n) ; do
+        taskdir=$(dirname $f)
+        if echo $f | grep -q tasks ; then 
+            taskid=$(echo $f | sed -e 's!^\./!!g' | sed -e 's!/tasks/!.!g' | sed -e 's!/task$!!')
+        else 
+            taskid=$(echo $f | echo $f | sed -e  's!^\./!!g' | sed -e 's!/!.!g' | sed -e 's!task$!!')
+        fi
+        echo -n "$taskid: "
+        cat $f
+    done
+fi
