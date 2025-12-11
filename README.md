@@ -21,3 +21,4 @@ Simple Task Manager inspired by vimwiki and password-store.
 * better output formatting 
 * set priority
 * set Tags
+* add date info
