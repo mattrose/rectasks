@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+taskdir=$HOME/.local/share/tasks
+
+if ! [[ -d $taskdir ]] ; then 
+  mkdir -p $taskdir
+fi
+
+pushd $taskdir >/dev/null
+
+# get new taskid
+
+if echo $1 | grep -q -E "^\d+(\.\d+)*$" ; then 
+	taskid=$1
+   	if echo $taskid | grep -q "\." ; then
+        	path=""
+        	pathsep="/tasks/"
+        	array=${taskid//./ }  
+        	for e in $(echo $array) ; do 
+            		path=$(echo $path$e$pathsep)
+        	done 
+        	# take the last pathsep off
+        	# path=$(echo $path | sed -e 's!/tasks/$!!')
+    	else
+        	path=$taskid/tasks/
+    	fi
+fi
+
+	#lastid=$(find * -maxdepth 0 -type d -regex "[0-9]*" | wc -l)
+	#taskid=$(($lastid+1))
+	#path=$taskid
+	
+if [[ -d $path ]] ; then
+	lastid=$(find $path * -maxdepth 0 -type d -regex "[0-9]*" | wc -l)
+	taskid=$((lastid+1))
+else
+	echo $path exists
+fi
+	
+# echo $* > $taskid/task
