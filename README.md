@@ -12,12 +12,14 @@ Simple Task Manager inspired by vimwiki and password-store.
 
 ### Next up:
 
+* add # of comments to task list
+* add command to add comments to a task
 * mark task as complete
-* add task (without writing the files directly)
 
 ### Wish list:
 
-* add xdg compatibility
+* add a command-line flag for opening the task in an editor
+* the code is already getting a little copy-paste-y, need to figure this out
 * better output formatting 
 * set priority
 * set Tags
