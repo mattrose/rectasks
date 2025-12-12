@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 
-taskdir=$HOME/.local/share/tasks
-pushd $taskdir >/dev/null
+if ! [[ -v RTASKDIR ]] ; then
+    if ! [[ -v XDG_DATA_HOME ]] ; then
+        XDG_DATA_HOME=$HOME/.local/share
+    fi
+    RTASKDIR=$XDG_DATA_HOME/tasks
+fi
+
+pushd $RTASKDIR >/dev/null
 
 details=$1
 if [[ -n "$details" ]] ; then
@@ -26,7 +32,7 @@ else
         if echo $f | grep -q tasks ; then 
             taskid=$(echo $f | sed -e 's!^\./!!g' | sed -e 's!/tasks/!.!g' | sed -e 's!/task$!!')
         else 
-            taskid=$(echo $f | echo $f | sed -e  's!^\./!!g' | sed -e 's!/!.!g' | sed -e 's!task$!!')
+            taskid=$(echo $f | echo $f | sed -e  's!^\./!!g' | sed -e 's!/!!g' | sed -e 's!task$!!')
         fi
         echo -n "$taskid: "
         cat $f
