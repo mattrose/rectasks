@@ -10,7 +10,11 @@ fi
 pushd $RTASKDIR >/dev/null
 
 details=$1
+
 if [[ -n "$details" ]] ; then
+    if [[ "$details" = "done" ]] ; then
+        echo list completed tasks here
+    fi
     if echo $details | grep -q "\." ; then
         path=""
         pathsep="/tasks/"
@@ -25,6 +29,7 @@ if [[ -n "$details" ]] ; then
     fi
     if [[ -e $path/task ]] ; then cat $path/task ; fi 
     if [[ -d $path/comments ]] ; then cat $path/comments/* ; fi
+    if [[ -e $path/complete ]] ; then echo -n "DONE: " ; cat $path/complete
     exit 0
 else 
     for f in $(find . -name task | sort -n) ; do

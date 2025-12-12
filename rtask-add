@@ -13,6 +13,7 @@ if ! [[ -d $RTASKDIR ]] ; then
   mkdir -p $RTASKDIR
 fi
 
+echo $RTASKDIR
 pushd $RTASKDIR >/dev/null
 
 # get new taskid
@@ -31,7 +32,7 @@ if echo $1 | grep -q -E "^\d+(\.\d+)*$" ; then
             echo TaskID does not exist
             exit 1
         fi
-        lastid=$(find $path/* -maxdepth 0 -type d -regex "[0-9]*" | wc -l)
+        lastid=$(ls $path | grep "[0-9]*" | wc -l)
 	    taskid=$(($lastid+1))
         path=$path$taskid
    	else
@@ -40,7 +41,7 @@ if echo $1 | grep -q -E "^\d+(\.\d+)*$" ; then
             exit 1
         fi
        	path=$taskid/tasks
-        lastid=$(find $path/* -maxdepth 0 -type d -regex "[0-9]*" | wc -l)
+        lastid=$(ls $path | grep "[0-9]*" | wc -l)
 	    taskid=$(($lastid+1))
         path=$path/$taskid
    	fi
@@ -52,6 +53,5 @@ fi
 
 echo creating path $path
 echo creating task at $path/task
-exit 0
 mkdir -p $path
 echo $* > $path/task
