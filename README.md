@@ -24,3 +24,5 @@ Simple Task Manager inspired by vimwiki and password-store.
 * set priority
 * set Tags
 * add date info
+* add git support for synchronization
+* web interface, likely using sinatra
