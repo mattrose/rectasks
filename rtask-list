@@ -28,27 +28,25 @@ if [[ -n "$details" ]] ; then
     else 
         path=$details
     fi
+    if [[ -e $path/complete ]] ; then echo -n "DONE: " ; cat $path/task ; exit 0 ; fi
     if [[ -e $path/task ]] ; then cat $path/task ; fi 
     if [[ -d $path/comments ]] ; then cat $path/comments/* ; fi
-    if [[ -e $path/complete ]] ; then echo -n "DONE: " ; cat $path/complete ; fi
 else 
     for f in $(find . -name task | sort -n) ; do
 	comment_str=""
         taskdir="$(dirname $f)"
+        if [[ -e $taskdir/complete ]] ; then
+            continue
+        fi
+        comment_count=$(ls $taskdir/comments/ 2>/dev/null | wc -l)
+	    comment_int=$(($comment_count+0))
+	    if ! [[ $comment_int -eq 0 ]] ; then 
+		    comment_str="($comment_int)"
+	    fi
         if echo $f | grep -q tasks ; then 
             taskfile=$(echo $f | sed -e 's!^\./!!g' | sed -e 's!/tasks/!.!g' | sed -e 's!/task$!!')
-	    comment_count=$(ls $taskdir/comments/ 2>/dev/null | wc -l)
-	    comment_int=$(($comment_count+0))
-	    if ! [[ $comment_int -eq 0 ]] ; then 
-		    comment_str="($comment_int)"
-	    fi
         else 
             taskfile=$(echo $f | echo $f | sed -e  's!^\./!!g' | sed -e 's!/!!g' | sed -e 's!task$!!')
-            comment_count=$(ls $taskdir/comments/ 2>/dev/null | wc -l)
-	    comment_int=$(($comment_count+0))
-	    if ! [[ $comment_int -eq 0 ]] ; then 
-		    comment_str="($comment_int)"
-	    fi
         fi
         echo -n "$taskfile: "
         echo -n "$comment_str " 
