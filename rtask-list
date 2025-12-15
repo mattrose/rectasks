@@ -13,7 +13,8 @@ details=$1
 
 if [[ -n "$details" ]] ; then
     if [[ "$details" = "done" ]] ; then
-        echo list completed tasks here
+        echo TODO list completed tasks here
+	exit 1
     fi
     if echo $details | grep -q "\." ; then
         path=""
@@ -29,17 +30,28 @@ if [[ -n "$details" ]] ; then
     fi
     if [[ -e $path/task ]] ; then cat $path/task ; fi 
     if [[ -d $path/comments ]] ; then cat $path/comments/* ; fi
-    if [[ -e $path/complete ]] ; then echo -n "DONE: " ; cat $path/complete
-    exit 0
+    if [[ -e $path/complete ]] ; then echo -n "DONE: " ; cat $path/complete ; fi
 else 
     for f in $(find . -name task | sort -n) ; do
-        taskdir=$(dirname $f)
+	comment_str=""
+        taskdir="$(dirname $f)"
         if echo $f | grep -q tasks ; then 
-            taskid=$(echo $f | sed -e 's!^\./!!g' | sed -e 's!/tasks/!.!g' | sed -e 's!/task$!!')
+            taskfile=$(echo $f | sed -e 's!^\./!!g' | sed -e 's!/tasks/!.!g' | sed -e 's!/task$!!')
+	    comment_count=$(ls $taskdir/comments/ 2>/dev/null | wc -l)
+	    comment_int=$(($comment_count+0))
+	    if ! [[ $comment_int -eq 0 ]] ; then 
+		    comment_str="($comment_int)"
+	    fi
         else 
-            taskid=$(echo $f | echo $f | sed -e  's!^\./!!g' | sed -e 's!/!!g' | sed -e 's!task$!!')
+            taskfile=$(echo $f | echo $f | sed -e  's!^\./!!g' | sed -e 's!/!!g' | sed -e 's!task$!!')
+            comment_count=$(ls $taskdir/comments/ 2>/dev/null | wc -l)
+	    comment_int=$(($comment_count+0))
+	    if ! [[ $comment_int -eq 0 ]] ; then 
+		    comment_str="($comment_int)"
+	    fi
         fi
-        echo -n "$taskid: "
-        cat $f
+        echo -n "$taskfile: "
+        echo -n "$comment_str " 
+	cat $f
     done
 fi

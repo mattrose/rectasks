@@ -1,3 +1,9 @@
+
+# Vim
+.*.sw?
+
+# Test Tasks dir
+/tasks
 *.gem
 *.rbc
 /.config

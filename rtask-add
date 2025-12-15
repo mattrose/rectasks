@@ -32,7 +32,7 @@ if echo $1 | grep -q -E "^\d+(\.\d+)*$" ; then
             echo TaskID does not exist
             exit 1
         fi
-        lastid=$(ls $path | grep "[0-9]*" | wc -l)
+        lastid=$(ls $path 2>/dev/null | grep "[0-9]*" | wc -l)
 	    taskid=$(($lastid+1))
         path=$path$taskid
    	else
@@ -41,7 +41,7 @@ if echo $1 | grep -q -E "^\d+(\.\d+)*$" ; then
             exit 1
         fi
        	path=$taskid/tasks
-        lastid=$(ls $path | grep "[0-9]*" | wc -l)
+        lastid=$(ls $path 2>/dev/null | grep "[0-9]*" | wc -l)
 	    taskid=$(($lastid+1))
         path=$path/$taskid
    	fi

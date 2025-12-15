@@ -9,10 +9,12 @@ Simple Task Manager inspired by vimwiki and password-store.
 
 * task list
 * list comments for task
+* cli for adding tasks
+* task directory configurable through environment vars
+* add # of comments to task list
 
 ### Next up:
 
-* add # of comments to task list
 * add command to add comments to a task
 * mark task as complete
 
