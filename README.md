@@ -13,14 +13,23 @@ Simple Task Manager inspired by vimwiki and password-store.
 * task directory configurable through environment vars
 * add # of comments to task list
 * mark task as complete
+* add command to add comments to a task
+* if there is no text left at the end of argument processing, open an editor
 
 ### Next up:
 
-* add command to add comments to a task
+With this commit, I think it does everything I need it to do.  (Famous Last Words) 
+
+* proper argument processing
+* functions
+  * taskid to path converter (useful for parsing command-line taskids)
+  * path to taskid (useful for listing tasks)
+  * createtasksdir (useful for creating tasks)
+  * createtaskfile (useful for creating task as "task" file and complete and possibly for other stuff like datetime and priority) 
+  * createcomment (so far
 
 ### Wish list:
 
-* add a command-line flag for opening the task in an editor
 * the code is already getting a little copy-paste-y, need to figure this out
 * Currently, the code is basically one different script per op, need to combine this
 * better output formatting 

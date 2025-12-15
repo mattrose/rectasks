@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# vim: set ts=4 sw=4 et:
 echo $BASH_VERSION
 
 
@@ -54,4 +55,10 @@ fi
 echo creating path $path
 echo creating task at $path/task
 mkdir -p $path
-echo $* > $path/task
+
+if [[ -z $* ]] ; then 
+    ${EDITOR:=vim} $path/task
+else
+    echo $* > $path/task
+fi
+
