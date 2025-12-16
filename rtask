@@ -1,17 +1,18 @@
 #!/usr/bin/env bash
 # vim: set ts=4 sw=4 et:
+p=$HOME/.local/lib
 case $1 in 
     add)
         shift 1 
-        bash rtask-add "$@"
+        bash $p/rtask-add "$@"
         ;;
     list)
         shift 1 
-        bash rtask-list "$@"
+        bash $p/rtask-list "$@"
         ;;
     comment)
         shift 1 
-        bash rtask-comment "$@"
+        bash $p/rtask-comment "$@"
         ;;
     *)
         echo "no"

@@ -24,9 +24,8 @@ With this commit, I think it does everything I need it to do.  (Famous Last Word
 * functions
   * taskid to path converter (useful for parsing command-line taskids)
   * path to taskid (useful for listing tasks)
-  * createtasksdir (useful for creating tasks)
-  * createtaskfile (useful for creating task as "task" file and complete and possibly for other stuff like datetime and priority) 
-  * createcomment (so far
+  * createtask (useful for creating task as "task" file and complete and possibly for other stuff like datetime and priority) 
+  * createcomment 
 
 ### Wish list:
 

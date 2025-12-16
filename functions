@@ -1,0 +1,52 @@
+# vim: set ts=4 sw=4 et:
+
+# temporary
+pushd ./tasks
+
+taskid() {
+    local path=$1
+    if echo $path | grep -q tasks ; then 
+        id=$(echo $path | sed -e 's!^\./!!g' | sed -e 's!/tasks/!.!g' | sed -e 's!/task$!!')
+    else
+        id=$(echo $path | sed -e  's!^\./!!g' | sed -e 's!/!!g' | sed -e 's!task$!!')
+    fi
+    echo $id
+}
+
+taskpath()  {
+    local id=$1
+    if echo $id | grep -q "\." ; then
+        path=""
+        pathsep="/tasks/"
+        array=${id//./ }  
+        for e in $(echo $array) ; do 
+            path=$(echo $path$e$pathsep)
+        done 
+        # take the last pathsep off
+        path=$(echo $path | sed -e 's!/tasks/$!!')
+    else 
+        path=$id
+    fi
+    echo $path
+}
+
+findnewid() {
+    if [[ -z $1 ]] ; then
+        path="."
+    else
+        path=$(taskpath $1)/tasks
+    fi
+    lastid=$(ls $path 2>/dev/null | grep "^[0-9]*$" | wc -l)
+    newid=$(($lastid+1))
+    echo $newid
+}
+
+createtask() {
+    newid=$(findnewid $1)
+    path=$(taskpath $1)/tasks 
+    echo mkdir -p $path/$newid
+    echo touch $path/$newid/task
+}
+
+createtask 1
+
