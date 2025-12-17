@@ -1,56 +1,32 @@
 #!/usr/bin/env bash
 # vim: set ts=4 sw=4 et:
 
-if ! [[ -v RTASKDIR ]] ; then
-    if ! [[ -v XDG_DATA_HOME ]] ; then
-        XDG_DATA_HOME=$HOME/.local/share
-    fi
-    RTASKDIR=$XDG_DATA_HOME/tasks
-fi
-
-pushd $RTASKDIR >/dev/null
+source ./functions
+pushd $(gettasksdir) >/dev/null
 
 details=$1
 
 if [[ -n "$details" ]] ; then
     if [[ "$details" = "done" ]] ; then
         echo TODO list completed tasks here
-	exit 1
+    	exit 1
     fi
-    if echo $details | grep -q "\." ; then
-        path=""
-        pathsep="/tasks/"
-        array=${details//./ }  
-        for e in $(echo $array) ; do 
-            path=$(echo $path$e$pathsep)
-        done 
-        # take the last pathsep off
-        path=$(echo $path | sed -e 's!/tasks/$!!')
-    else 
-        path=$details
-    fi
+    path=$(taskpath $details)
     if [[ -e $path/complete ]] ; then echo -n "DONE: " ; cat $path/task ; exit 0 ; fi
     if [[ -e $path/task ]] ; then cat $path/task ; fi 
     if [[ -d $path/comments ]] ; then cat $path/comments/* ; fi
 else 
     for f in $(find . -name task | sort -n) ; do
-	comment_str=""
         taskdir="$(dirname $f)"
         if [[ -e $taskdir/complete ]] ; then
             continue
         fi
-        comment_count=$(ls $taskdir/comments/ 2>/dev/null | wc -l)
-	    comment_int=$(($comment_count+0))
-	    if ! [[ $comment_int -eq 0 ]] ; then 
-		    comment_str="($comment_int)"
-	    fi
-        if echo $f | grep -q tasks ; then 
-            taskfile=$(echo $f | sed -e 's!^\./!!g' | sed -e 's!/tasks/!.!g' | sed -e 's!/task$!!')
-        else 
-            taskfile=$(echo $f | echo $f | sed -e  's!^\./!!g' | sed -e 's!/!!g' | sed -e 's!task$!!')
-        fi
+        taskfile=$(taskid $f)
+        comments=$(getcommentcount $f)
         echo -n "$taskfile: "
-        echo -n "$comment_str " 
+        if [[ $comments -ne 0 ]] ; then 
+            echo -n "($comments) " 
+        fi
 	cat $f
     done
 fi

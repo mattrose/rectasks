@@ -1,7 +1,16 @@
 # vim: set ts=4 sw=4 et:
 
 # temporary
-pushd ./tasks
+
+gettasksdir() {
+    if ! [[ -v RTASKDIR ]] ; then
+        if ! [[ -v XDG_DATA_HOME ]] ; then
+            XDG_DATA_HOME=$HOME/.local/share
+        fi
+        RTASKDIR=$XDG_DATA_HOME/tasks
+    fi
+    echo $RTASKDIR
+}
 
 taskid() {
     local path=$1
@@ -14,39 +23,63 @@ taskid() {
 }
 
 taskpath()  {
-    local id=$1
-    if echo $id | grep -q "\." ; then
-        path=""
-        pathsep="/tasks/"
-        array=${id//./ }  
-        for e in $(echo $array) ; do 
-            path=$(echo $path$e$pathsep)
-        done 
-        # take the last pathsep off
-        path=$(echo $path | sed -e 's!/tasks/$!!')
+    if [[ -z $1 ]] ; then 
+        path="."
     else 
-        path=$id
+        local id=$1
+        if echo $id | grep -q "\." ; then
+            path=""
+            pathsep="/tasks/"
+            array=${id//./ }  
+            for e in $(echo $array) ; do 
+                path=$(echo $path$e$pathsep)
+            done 
+            # take the last pathsep off
+            path=$(echo $path | sed -e 's!/tasks/$!!')
+        else 
+            path=$id
+        fi
     fi
     echo $path
+}
+
+getcommentcount() {
+    comment_str=""
+    taskdir="$(dirname $1)"
+    comment_count=$(ls $taskdir/comments/ 2>/dev/null | wc -l)
+    comment_int=$(($comment_count+0))
+    echo $comment_int
 }
 
 findnewid() {
     if [[ -z $1 ]] ; then
         path="."
     else
-        path=$(taskpath $1)/tasks
+        if ! [[ -d $(taskpath $1) ]] ; then 
+            error="No such taskID"
+        else
+            path=$(taskpath $1)/tasks
+        fi
     fi
     lastid=$(ls $path 2>/dev/null | grep "^[0-9]*$" | wc -l)
     newid=$(($lastid+1))
-    echo $newid
+    if [[ -v error ]] ; then 
+        echo $error
+    else 
+        echo $newid
+    fi
 }
 
-createtask() {
+newtaskpath() {
     newid=$(findnewid $1)
-    path=$(taskpath $1)/tasks 
-    echo mkdir -p $path/$newid
-    echo touch $path/$newid/task
+    if [[ $newid = "No such taskID" ]] ; then echo $newid ; exit 1 ; fi
+    if [[ -z $1 ]] ; then 
+        path=$(taskpath $1)
+    else
+        path=$(taskpath $1)/tasks 
+    fi
+    echo $path/$newid
 }
 
-createtask 1
-
+### run tests here
+pushd ./tasks

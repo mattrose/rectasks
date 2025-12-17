@@ -1,5 +1,17 @@
 #!/usr/bin/env bash
 # vim: set ts=4 sw=4 et:
+
+if ! [[ -v RTASKDIR ]] ; then
+    if ! [[ -v XDG_DATA_HOME ]] ; then
+        XDG_DATA_HOME=$HOME/.local/share
+    fi
+    RTASKDIR=$XDG_DATA_HOME/tasks
+fi
+
+if ! [[ -d $RTASKDIR ]] ; then
+  mkdir -p $RTASKDIR
+fi
+
 p=$HOME/.local/lib
 case $1 in 
     add)
@@ -19,3 +31,5 @@ case $1 in
         exit 1
         ;;
 esac    
+
+
