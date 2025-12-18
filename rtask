@@ -1,35 +1,75 @@
 #!/usr/bin/env bash
 # vim: set ts=4 sw=4 et:
 
-if ! [[ -v RTASKDIR ]] ; then
-    if ! [[ -v XDG_DATA_HOME ]] ; then
-        XDG_DATA_HOME=$HOME/.local/share
-    fi
-    RTASKDIR=$XDG_DATA_HOME/tasks
+source $HOME/.local/lib/rtask-util
+
+tasksdir=$(gettasksdir)
+[[ -d $tasksdir ]] || mkdir -p $tasksdir 
+pushd $tasksdir
+
+[[ -z $1 ]] && action=list || action=$1
+shift 1
+### if the next argument matches a taskid...
+if echo $1 | grep -q -E "^\d+(\.\d+)*$" ; then
+       taskid=$1
+       shift 1
 fi
+text="$*"
 
-if ! [[ -d $RTASKDIR ]] ; then
-  mkdir -p $RTASKDIR
-fi
+main() {
+    case $action in 
+        add)
+            add "$text"
+            ;;
+        details)
+            details $taskid
+            ;;
+        list)
+            list 
+            ;;
+        comment)
+            comment "$text"
+            ;;
+        *)
+            echo "no"
+            exit 1
+            ;;
+    esac    
+}
 
-p=$HOME/.local/lib
-case $1 in 
-    add)
-        shift 1 
-        bash $p/rtask-add "$@"
-        ;;
-    list)
-        shift 1 
-        bash $p/rtask-list "$@"
-        ;;
-    comment)
-        shift 1 
-        bash $p/rtask-comment "$@"
-        ;;
-    *)
-        echo "no"
-        exit 1
-        ;;
-esac    
+details() {
+    path=$(taskpath $taskid)
+    if [[ -e $path/complete ]] ; then echo -n "DONE: " ; fi
+    if [[ -e $path/task ]] ; then cat $path/task ; fi
+    if [[ -d $path/comments ]] ; then cat $path/comments/* ; fi
+}
 
+list() {
+    for f in $(find . -name task | sort -n) ; do
+        taskdir="$(dirname $f)"
+        if [[ -e $taskdir/complete ]] ; then
+            continue
+        fi
+        taskfile=$(taskid $f)
+        comments=$(getcommentcount $f)
+        echo -n "$taskfile: "
+        if [[ $comments -ne 0 ]] ; then
+            echo -n "($comments) "
+        fi
+	    cat $f
+    done
+}
 
+add() {
+    path=$(newtaskpath $taskid)
+    mkdir -p $path
+    [[ -z $text ]] && ${EDITOR:=vim} $path/task || echo "$text" > ${path}/task
+}
+
+comment() {
+    path=$(newcommentpath $taskid)
+    mkdir -p $(dirname $path)
+    [[ -z $* ]] && ${EDITOR:=vim} $path || echo $* > $path
+}
+
+main

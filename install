@@ -1,6 +1,9 @@
-chmod 755 rtask*
-mkdir -p $HOME/.local/bin/
-mkdir -p $HOME/.local/lib
+chmod 755 rtask rtask-util
+mkdir -p $HOME/.local/lib/
+rm -rf $HOME/.local/lib/rtask-util
+cp rtask-util $HOME/.local/lib/
+mkdir -p $HOME/.local/bin
+rm -rf $HOME/.local/bin/rtask
 cp rtask $HOME/.local/bin/
-cp rtask-* $HOME/.local/lib/
+
 

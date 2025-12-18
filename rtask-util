@@ -52,13 +52,19 @@ getcommentcount() {
 }
 
 findnewid() {
+    if [[ $1 == "comment" ]] ; then 
+        dir="comments"
+        shift 1 
+    else
+        dir="tasks"
+    fi
     if [[ -z $1 ]] ; then
         path="."
     else
         if ! [[ -d $(taskpath $1) ]] ; then 
             error="No such taskID"
         else
-            path=$(taskpath $1)/tasks
+            path=$(taskpath $1)/$dir
         fi
     fi
     lastid=$(ls $path 2>/dev/null | grep "^[0-9]*$" | wc -l)
@@ -81,5 +87,16 @@ newtaskpath() {
     echo $path/$newid
 }
 
+newcommentpath() {
+    newid=$(findnewid comment $1)
+    if [[ $newid = "No such taskID" ]] ; then echo $newid ; exit 1 ; fi
+    if [[ -z $1 ]] ; then 
+        path=$(taskpath $1)
+    else
+        path=$(taskpath $1)/comments
+    fi
+    echo $path/$newid
+}
+
 ### run tests here
-pushd ./tasks
+# pushd ./tasks

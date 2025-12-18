@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # vim: set ts=4 sw=4 et:
 
-source ./functions
+source ./rtask-util
 pushd $(gettasksdir) >/dev/null
 
 details=$1

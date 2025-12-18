@@ -1,18 +1,8 @@
 #!/usr/bin/env bash
 # vim: set ts=4 sw=4 et:
 
-if ! [[ -v RTASKDIR ]] ; then 
-    if ! [[ -v XDG_DATA_HOME ]] ; then 
-        XDG_DATA_HOME=$HOME/.local/share
-    fi
-    RTASKDIR=$XDG_DATA_HOME/tasks
-fi
-
-if ! [[ -d $RTASKDIR ]] ; then 
-  mkdir -p $RTASKDIR
-fi
-
-echo $RTASKDIR
+source rtask-util
+RTASKSDIR=$(gettasksdir)
 pushd $RTASKDIR >/dev/null
 
 
@@ -23,33 +13,7 @@ else
     exit 1
 fi
 shift 1 
-
-if echo $taskid | grep -q "\." ; then
-    path=""
-    pathsep="/tasks/"
-    array=${taskid//./ }  
-    for e in $(echo $array) ; do 
-        path=$(echo $path$e$pathsep)
-    done 
-    if ! [[ -d ${path:0:length-6} ]] ; then 
-        echo TaskID does not exist
-        exit 1
-    fi
-    path=${path:0:length-6}comments/
-    lastid=$(ls $path 2>/dev/null | grep "[0-9]*" | wc -l)
-    taskid=$(($lastid+1))
-    path=$path$taskid
-else 
-    if ! [[ -d $taskid ]] ; then
-        echo TaskID does not exist
-        exit 1
-    fi
-    path=$taskid
-    lastid=$(ls $path/comments 2>/dev/null | grep "[0-9]*" | wc -l)
-    taskid=$(($lastid+1))
-    path=$path/comments/$taskid
-fi
-   
+path=$(newcommentpath $taskid)
 echo creating path $(dirname $path)
 echo creating comment at $path
 mkdir -p $(dirname $path)

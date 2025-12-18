@@ -2,7 +2,7 @@
 # vim: set ts=4 sw=4 et:
 echo $BASH_VERSION
 
-source functions
+source rtask-util
 RTASKDIR=$(gettasksdir)
 pushd $RTASKDIR >/dev/null
 
