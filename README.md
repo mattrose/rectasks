@@ -2,8 +2,9 @@
 Simple Task Manager inspired by vimwiki and password-store.  
 
 * File backend
-* infinitely recursive sub-tasks that can easily be moved up the chain.
+* infinitely recursive sub-tasks 
 * comments on tasks 
+
 * simple structure.  simple functions which output text.  These functions can be used by their consumers to transform text to actions
 * this means we can change languages for functions easily
 
@@ -30,14 +31,10 @@ Simple Task Manager inspired by vimwiki and password-store.
 
 With this commit, I think it does everything I need it to do.  (Famous Last Words) 
 
-* functions for rtask-comment
 * rtask-mv
-* proper argument processing
 
 ### Wish list:
 
-* the code is already getting a little copy-paste-y, need to figure this out
-* Currently, the code is basically one different script per op, need to combine this
 * set priority
 * set Tags
 * add date info
