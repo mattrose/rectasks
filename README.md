@@ -49,6 +49,7 @@ With this commit, I think it does everything I need it to do.  (Famous Last Word
 ### Wish list:
 
 * make rtask priority the default?
+* move all the functions into the script?  This seems like a PITA to maintain
 * set Tags
 * add date info
 * add git support for synchronization
