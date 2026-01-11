@@ -18,8 +18,10 @@ Simple Task Manager inspired by vimwiki and password-store.
 * mark task as complete
 * add command to add comments to a task
 * if there is no text left at the end of argument processing, open an editor
-* functions are currently written for add and list
-* functions (currently in the add_functions branch)
+* proper argument processing
+* rtask priority will order by priority
+* move 
+* functions 
   * gettasksdir (for reading RTASKDIR)
   * taskid (for converting path to taskid)
   * taskpath (for converting taskid to path)
@@ -31,11 +33,22 @@ Simple Task Manager inspired by vimwiki and password-store.
 
 With this commit, I think it does everything I need it to do.  (Famous Last Words) 
 
-* rtask-mv
+* set priority
+  * higher the number the higher the priority.  Default is 0
+* edit tasks
+* set tags
+* set date info
+
+* list is gonna get gnarly
+  * rtask list <taskid> calls "details <taskid>"
+  * rtask list created will order by created date
+  * rtask list completed 
+  * rtask list <tag> will list tasks with matching tags
+    * match multiple tags? syntax?
 
 ### Wish list:
 
-* set priority
+* make rtask priority the default?
 * set Tags
 * add date info
 * add git support for synchronization

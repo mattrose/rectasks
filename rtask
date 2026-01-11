@@ -18,6 +18,15 @@ text="$*"
 
 main() {
     case $action in 
+        edit)
+            edit $taskid
+            ;;
+        complete)
+            finish $taskid
+            ;;
+        move)
+            move $taskid $text
+            ;;
         add)
             add "$text"
             ;;
@@ -25,7 +34,14 @@ main() {
             details $taskid
             ;;
         list)
-            list 
+            if [[ -v taskid ]] ; then 
+                details $taskid 
+            else
+                list 
+            fi
+            ;;
+        priority)
+            list p
             ;;
         comment)
             comment "$text"
@@ -37,6 +53,11 @@ main() {
     esac    
 }
 
+move() {
+    mv $(taskpath $1) $(newtaskpath $2)
+    echo $(taskpath $1)
+    echo $(newtaskpath $2) 
+}
 details() {
     path=$(taskpath $taskid)
     if [[ -e $path/complete ]] ; then echo -n "DONE: " ; fi
@@ -45,7 +66,12 @@ details() {
 }
 
 list() {
-    for f in $(find . -name task | sort -n) ; do
+    if [[ $1 = "p" ]] ; then 
+        tasklist=$(for f in $(find . -name task) ; do td=$(dirname $f) ; if [[ -e $td/priority ]] ; then p=$(cat $td/priority) ; else p=0 ; fi ; echo "$p $f" ; done | sort -k1,1nr -k2,2n | cut -f 2- -d ' ')
+    else
+        tasklist=$(find . -name task | sort -n)
+    fi
+    for f in $tasklist ; do
         taskdir="$(dirname $f)"
         if [[ -e $taskdir/complete ]] ; then
             continue
