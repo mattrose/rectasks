@@ -21,6 +21,7 @@ Simple Task Manager inspired by vimwiki and password-store.
 * proper argument processing
 * rtask priority will order by priority
 * move 
+* complete a task
 * functions 
   * gettasksdir (for reading RTASKDIR)
   * taskid (for converting path to taskid)

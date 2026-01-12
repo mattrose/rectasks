@@ -53,6 +53,10 @@ main() {
     esac    
 }
 
+finish() {
+    touch $(taskpath $1)/complete
+}
+
 move() {
     mv $(taskpath $1) $(newtaskpath $2)
     echo $(taskpath $1)
