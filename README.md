@@ -23,6 +23,7 @@ Simple Task Manager inspired by vimwiki and password-store.
 * move 
 * complete a task
 * edit tasks
+* make rtask priority the default
 * functions 
   * gettasksdir (for reading RTASKDIR)
   * taskid (for converting path to taskid)
@@ -49,7 +50,6 @@ With this commit, I think it does everything I need it to do.  (Famous Last Word
 
 ### Wish list:
 
-* make rtask priority the default?
 * move all the functions into the script?  This seems like a PITA to maintain
 * set Tags
 * add date info
