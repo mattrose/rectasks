@@ -7,7 +7,7 @@ tasksdir=$(gettasksdir)
 [[ -d $tasksdir ]] || mkdir -p $tasksdir 
 pushd $tasksdir > /dev/null 
 
-[[ -z $1 ]] && action=list || action=$1
+[[ -z $1 ]] && action=priority || action=$1
 shift 1
 ### if the next argument matches a taskid...
 if echo $1 | grep -q -E "^\d+(\.\d+)*$" ; then
