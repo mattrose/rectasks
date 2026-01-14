@@ -22,6 +22,7 @@ Simple Task Manager inspired by vimwiki and password-store.
 * rtask priority will order by priority
 * move 
 * complete a task
+* edit tasks
 * functions 
   * gettasksdir (for reading RTASKDIR)
   * taskid (for converting path to taskid)
@@ -36,7 +37,6 @@ With this commit, I think it does everything I need it to do.  (Famous Last Word
 
 * set priority
   * higher the number the higher the priority.  Default is 0
-* edit tasks
 * set tags
 * set date info
 
