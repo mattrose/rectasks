@@ -102,4 +102,8 @@ comment() {
     [[ -z $* ]] && ${EDITOR:=vim} $path || echo $* > $path
 }
 
+edit() {
+    ${EDITOR:=vim} $(taskpath $1)/task
+}
+
 main
