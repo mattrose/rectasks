@@ -5,7 +5,7 @@ source $HOME/.local/lib/rtask-util
 
 tasksdir=$(gettasksdir)
 [[ -d $tasksdir ]] || mkdir -p $tasksdir 
-pushd $tasksdir
+pushd $tasksdir > /dev/null 
 
 [[ -z $1 ]] && action=list || action=$1
 shift 1
