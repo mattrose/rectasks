@@ -20,10 +20,12 @@ Simple Task Manager inspired by vimwiki and password-store.
 * if there is no text left at the end of argument processing, open an editor
 * proper argument processing
 * rtask priority will order by priority
+  * higher the number the higher the priority.  Default is 0
 * move 
 * complete a task
 * edit tasks
 * make rtask priority the default
+* set priority
 * functions 
   * gettasksdir (for reading RTASKDIR)
   * taskid (for converting path to taskid)
@@ -36,15 +38,17 @@ Simple Task Manager inspired by vimwiki and password-store.
 
 With this commit, I think it does everything I need it to do.  (Famous Last Words) 
 
-* set priority
-  * higher the number the higher the priority.  Default is 0
+* rtask complete without taskid lists all completed tasks
+* Get ready for 0.1
+  * Describe the command line
+  * Finish usage
+  * Come up with webpage bumpf
+  * more error-checking
 * set tags
 * set date info
 
 * list is gonna get gnarly
   * rtask list <taskid> calls "details <taskid>"
-  * rtask list created will order by created date
-  * rtask list completed 
   * rtask list <tag> will list tasks with matching tags
     * match multiple tags? syntax?
 
@@ -57,6 +61,7 @@ With this commit, I think it does everything I need it to do.  (Famous Last Word
 * web interface, likely using flask, maybe sinatra
 * TUI?  tuis are cool
 * better output formatting 
+  * indented subtasks?
 * more stuff around completed tasks
   * archive tasks after completion, so they don't hang around forever in the fs
   * list comments to completed tasks when listing them.

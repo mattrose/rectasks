@@ -1,7 +1,50 @@
 #!/usr/bin/env bash
 # vim: set ts=4 sw=4 et:
 
-source $HOME/.local/lib/rtask-util
+if [[ -e $HOME/.local/lib/rtask-util ]] ; then
+    source $HOME/.local/lib/rtask-util
+else
+    echo "Cannot find rtask-util, make sure it is in $HOME/.local/lib/rtask-util"
+    echo "Have you run the `install` script"
+fi
+
+usage() {
+    cat <<'EOF'
+
+    RTASK is a simple recursive task manager that helps you organize
+    everything that is thrown at you on a daily basis.  It's designed 
+    to be:
+    1. Easy to use.  lets you add and edit tasks easily from the command
+       line and stays out of your way.
+    2. Simple.  It's just files on disk, so it can theoretically contain
+       anything you want, and information can be easily drawn from it
+    3. Allows you to set up an infinite (theoretically) amount of sub tasks
+    4. Allows you to add comments to tasks to add context.
+
+    USAGE: rtask <action> <taskid> <text>
+    if not given any arguments, rtask prints out a list of tasks
+    
+    Available Actions
+    
+    * add: rtask add <taskid> <text>.
+      * if taskid is not specified it opens a new task
+      * If taskid is specified, it opens a sub-task  
+      * If text is not specified, it opens an editor
+    * list: rtask list <taskid>
+      * if taskid is specified, it prints out all the 
+        detailsx for that task
+    * complete: rtask complete taskid
+      * marks a task as complete and removes it from 
+        the list view
+    * edit: rtask edit taskid 
+      * opens $EDITOR for that task
+    * comment: rtask comment taskid
+      * adds a comment to a task
+    *  
+
+EOF
+   
+}
 
 tasksdir=$(gettasksdir)
 [[ -d $tasksdir ]] || mkdir -p $tasksdir 
@@ -41,13 +84,16 @@ main() {
             fi
             ;;
         priority)
-            list p
+            setpriority $taskid $text 
             ;;
         comment)
             comment "$text"
             ;;
+        setpriority)
+            setpriority $taskid $text
+            ;;
         *)
-            echo "no"
+            usage
             exit 1
             ;;
     esac    
@@ -67,14 +113,12 @@ details() {
     if [[ -e $path/complete ]] ; then echo -n "DONE: " ; fi
     if [[ -e $path/task ]] ; then cat $path/task ; fi
     if [[ -d $path/comments ]] ; then cat $path/comments/* ; fi
+    if [[ -e $path/priority ]] ; then echo -n "P " ; cat $path/priority ; fi
 }
 
 list() {
-    if [[ $1 = "p" ]] ; then 
-        tasklist=$(for f in $(find . -name task) ; do td=$(dirname $f) ; if [[ -e $td/priority ]] ; then p=$(cat $td/priority) ; else p=0 ; fi ; echo "$p $f" ; done | sort -k1,1nr -k2,2n | cut -f 2- -d ' ')
-    else
-        tasklist=$(find . -name task | sort -n)
-    fi
+    tasklist=$(for f in $(find . -name task) ; do td=$(dirname $f) ; if [[ -e $td/priority ]] ; then p=$(cat $td/priority) ; else p=0 ; fi ; echo "$p $f" ; done | sort -k1,1nr -k2,2n | cut -f 2- -d ' ')
+    # tasklist=$(find . -name task | sort -n)
     for f in $tasklist ; do
         taskdir="$(dirname $f)"
         if [[ -e $taskdir/complete ]] ; then
@@ -104,6 +148,11 @@ comment() {
 
 edit() {
     ${EDITOR:=vim} $(taskpath $1)/task
+}
+
+setpriority() {
+    path=$(taskpath $1)/priority
+    echo $2 > $path
 }
 
 main
