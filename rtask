@@ -1,13 +1,6 @@
 #!/usr/bin/env bash
 # vim: set ts=4 sw=4 et:
 
-if [[ -e $HOME/.local/lib/rtask-util ]] ; then
-    source $HOME/.local/lib/rtask-util
-else
-    echo "Cannot find rtask-util, make sure it is in $HOME/.local/lib/rtask-util"
-    echo "Have you run the `install` script"
-fi
-
 usage() {
     cat <<'EOF'
 
@@ -262,6 +255,4 @@ newcommentpath() {
     echo $path/$newid
 }
 
-### run tests here
-# pushd ./tasks
 main
