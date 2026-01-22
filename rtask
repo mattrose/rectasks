@@ -11,16 +11,6 @@ fi
 usage() {
     cat <<'EOF'
 
-    RTASK is a simple recursive task manager that helps you organize
-    everything that is thrown at you on a daily basis.  It's designed 
-    to be:
-    1. Easy to use.  lets you add and edit tasks easily from the command
-       line and stays out of your way.
-    2. Simple.  It's just files on disk, so it can theoretically contain
-       anything you want, and information can be easily drawn from it
-    3. Allows you to set up an infinite (theoretically) amount of sub tasks
-    4. Allows you to add comments to tasks to add context.
-
     USAGE: rtask <action> <taskid> <text>
     if not given any arguments, rtask prints out a list of tasks
     
@@ -40,57 +30,64 @@ usage() {
       * opens $EDITOR for that task
     * comment: rtask comment taskid
       * adds a comment to a task
-    *  
-
+    * priority: rtask priority <taskid> <value>  
+      * sets the priority of a task to make it appear
+        higher or lower in the list
+      * default is 0, negative numbers are lower
+        priority and positive numbers are higher
+    * move: rtask move <taskid> <taskid>
+      * move a subtask to a different parent task
 EOF
-   
+exit 1   
 }
 
 tasksdir=$(gettasksdir)
 [[ -d $tasksdir ]] || mkdir -p $tasksdir 
 pushd $tasksdir > /dev/null 
 
-[[ -z $1 ]] && action=priority || action=$1
+[[ -z $1 ]] && action="list" || action=$1
 shift 1
 ### if the next argument matches a taskid...
 if echo $1 | grep -q -E "^\d+(\.\d+)*$" ; then
        taskid=$1
        shift 1
 fi
-text="$*"
+
+if ! [[ $action = "add" || $action = "list" ]] ; then 
+    if  ! [[ -v taskid ]]  ; then 
+        usage
+    fi
+fi
+exit 0
 
 main() {
     case $action in 
         edit)
-            edit $taskid
+            edit 
             ;;
-        complete)
-            finish $taskid
+        complete) 
+            finish 
             ;;
         move)
             move $taskid $text
             ;;
         add)
+            text="$*"
             add "$text"
             ;;
-        details)
-            details $taskid
-            ;;
-        list)
+        list) #
             if [[ -v taskid ]] ; then 
                 details $taskid 
             else
                 list 
             fi
             ;;
-        priority)
+        priority) #
             setpriority $taskid $text 
             ;;
-        comment)
+        comment) # 
+            text="$*"
             comment "$text"
-            ;;
-        setpriority)
-            setpriority $taskid $text
             ;;
         *)
             usage
@@ -100,7 +97,7 @@ main() {
 }
 
 finish() {
-    touch $(taskpath $1)/complete
+    touch $(taskpath $taskid)/complete
 }
 
 move() {
@@ -147,12 +144,13 @@ comment() {
 }
 
 edit() {
-    ${EDITOR:=vim} $(taskpath $1)/task
+    ${EDITOR:=vim} $(taskpath $taskid)/task
 }
 
 setpriority() {
-    path=$(taskpath $1)/priority
+    path=$(taskpath $taskid)/priority
     echo $2 > $path
 }
+
 
 main
