@@ -26,6 +26,7 @@ Simple Task Manager inspired by vimwiki and password-store.
 * edit tasks
 * make rtask priority the default
 * set priority
+* move all the functions into the script
 * functions 
   * gettasksdir (for reading RTASKDIR)
   * taskid (for converting path to taskid)
@@ -33,20 +34,18 @@ Simple Task Manager inspired by vimwiki and password-store.
   * getcommentcount (obv, used in list)
   * findnewid (locate the next taskid when creating a task)
   * newtaskpath (get the path for a new task)
+* Get ready for 0.1
+  * Finish usage
+  * Come up with webpage bumpf https://folkwolf.net/rectasks/
+  * more error-checking, gone over with shellcheck
 
 ### Next up:
 
 With this commit, I think it does everything I need it to do.  (Famous Last Words) 
 
 * rtask complete without taskid lists all completed tasks
-* Get ready for 0.1
-  * Describe the command line
-  * Finish usage
-  * Come up with webpage bumpf
-  * more error-checking
 * set tags
-* set date info
-
+  * how do we go about this 
 * list is gonna get gnarly
   * rtask list <taskid> calls "details <taskid>"
   * rtask list <tag> will list tasks with matching tags
@@ -54,14 +53,12 @@ With this commit, I think it does everything I need it to do.  (Famous Last Word
 
 ### Wish list:
 
-* move all the functions into the script?  This seems like a PITA to maintain
-* set Tags
-* add date info
-* add git support for synchronization
-* web interface, likely using flask, maybe sinatra
-* TUI?  tuis are cool
+* set date info
 * better output formatting 
   * indented subtasks?
 * more stuff around completed tasks
   * archive tasks after completion, so they don't hang around forever in the fs
-  * list comments to completed tasks when listing them.
+  * list comments to completed tasks when listing them.* add date info
+* add git support for synchronization
+* web interface, likely using flask, maybe sinatra
+* TUI?  tuis are cool
