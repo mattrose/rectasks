@@ -149,6 +149,7 @@ list() {
 add() {
     path=$(newtaskpath "$taskid")
     mkdir -p "$path"
+    [[ -e "$path"/complete ]] && rm "$path"/complete
     [[ -z $text ]] && ${EDITOR:=vim} "$path"/task || echo "$text" > "${path}"/task
 }
 
