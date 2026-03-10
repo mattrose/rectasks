@@ -128,7 +128,7 @@ details() {
 }
 
 list() {
-    tasklist=$(for f in $(find . -name task) ; do td=$(dirname "$f") ; if [[ -e $td/priority ]] ; then p=$(cat "$td"/priority) ; else p=0 ; fi ; echo "$p $f" ; done | sort -k1,1nr -k2,2n | cut -f 2- -d ' ')
+    tasklist=$(for f in $(find . -name task) ; do td=$(dirname "$f") ; if [[ -e $td/priority ]] ; then p=$(cat "$td"/priority) ; else p=0 ; fi ; echo "$p $f" ; done | sort -k1,1nr -k2,2V | cut -f 2- -d ' ')
     # tasklist=$(for f in $(find . -name task) ; do td=$(dirname $f) ; if [[ -e $td/priority ]] ; then p=$(cat $td/priority) ; else p=0 ; fi ; echo "$p $f" ; done | sort -k1,1nr -k2,2n | cut -f 2- -d ' ')
     # tasklist=$(find . -name task | sort -n)
     for f in $tasklist ; do
