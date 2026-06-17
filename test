@@ -1,0 +1,119 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+RTASK="${SCRIPT_DIR}/rtask"
+
+if [[ ! -x "${RTASK}" ]]; then
+    echo "rtask executable not found at ${RTASK}"
+    exit 1
+fi
+
+TMPROOT="$(mktemp -d)"
+trap 'rm -rf "${TMPROOT}"' EXIT
+
+export RTASKDIR="${TMPROOT}/tasks"
+mkdir -p "${RTASKDIR}"
+
+assert_eq() {
+    local expected="$1"
+    local actual="$2"
+    local msg="$3"
+    if [[ "${expected}" != "${actual}" ]]; then
+        echo "FAIL: ${msg}"
+        echo "expected: ${expected}"
+        echo "actual:   ${actual}"
+        exit 1
+    fi
+}
+
+assert_file_contains() {
+    local path="$1"
+    local needle="$2"
+    local msg="$3"
+    if ! grep -Fq -- "${needle}" "${path}"; then
+        echo "FAIL: ${msg}"
+        echo "file: ${path}"
+        echo "wanted: ${needle}"
+        echo "actual:"
+        cat "${path}" || true
+        exit 1
+    fi
+}
+
+assert_output_contains() {
+    local output="$1"
+    local needle="$2"
+    local msg="$3"
+    if ! grep -Fq -- "${needle}" <<< "${output}"; then
+        echo "FAIL: ${msg}"
+        echo "wanted: ${needle}"
+        echo "actual:"
+        printf "%s\n" "${output}"
+        exit 1
+    fi
+}
+
+cat > "${TMPROOT}/fake_editor" <<'EOF'
+#!/usr/bin/env bash
+echo "edited via editor" > "$1"
+EOF
+chmod +x "${TMPROOT}/fake_editor"
+export EDITOR="${TMPROOT}/fake_editor"
+
+echo "1) add"
+"${RTASK}" add "top level task"
+assert_file_contains "${RTASKDIR}/1/task" "top level task" "add should create task text"
+
+echo "2) add subtask"
+"${RTASK}" add 1 "subtask text"
+assert_file_contains "${RTASKDIR}/1/tasks/1/task" "subtask text" "add with taskid should create subtask"
+
+echo "3) list"
+list_out="$("${RTASK}" list)"
+assert_output_contains "${list_out}" "1: top level task" "list should include top-level task"
+assert_output_contains "${list_out}" "1.1: subtask text" "list should include subtask id"
+
+echo "4) comment"
+"${RTASK}" comment 1 "first comment"
+assert_file_contains "${RTASKDIR}/1/comments/1" "first comment" "comment should write comment file"
+list_with_comment="$("${RTASK}" list)"
+assert_output_contains "${list_with_comment}" "1: (1) top level task" "list should show comment count"
+
+echo "5) priority"
+"${RTASK}" add "low prio task"
+"${RTASK}" priority 2 -1
+"${RTASK}" priority 1 5
+prio_list="$("${RTASK}" list)"
+first_line="$(printf "%s\n" "${prio_list}" | sed -n '1p')"
+assert_eq "1: (1) top level task" "${first_line}" "higher priority task should be listed first"
+
+echo "6) details"
+details_out="$("${RTASK}" list 1)"
+assert_output_contains "${details_out}" "TASK: top level task" "details should print task body"
+assert_output_contains "${details_out}" "COMMENTS" "details should print comments section"
+assert_output_contains "${details_out}" "first comment" "details should include comment content"
+assert_output_contains "${details_out}" "P 5" "details should include priority value"
+
+echo "7) complete"
+"${RTASK}" complete 2
+post_complete_list="$("${RTASK}" list)"
+if grep -Fq "2: low prio task" <<< "${post_complete_list}"; then
+    echo "FAIL: complete should hide task from list"
+    exit 1
+fi
+
+echo "8) edit"
+"${RTASK}" edit 1
+assert_file_contains "${RTASKDIR}/1/task" "edited via editor" "edit should invoke EDITOR on task file"
+
+echo "9) move"
+"${RTASK}" add 2 "target existing subtask"
+"${RTASK}" move 1.1 2
+if [[ -e "${RTASKDIR}/1/tasks/1/task" ]]; then
+    echo "FAIL: move should remove old subtask path"
+    exit 1
+fi
+assert_file_contains "${RTASKDIR}/2/tasks/2/task" "subtask text" "move should place subtask under target task"
+
+echo "All action tests passed."

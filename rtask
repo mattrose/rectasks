@@ -168,6 +168,10 @@ setpriority() {
     echo "$2" > "$path"
 }
 
+remove() {
+    rm $(taskpath "$taskid"/task)
+}
+
 ###########################################################
 #
 # Utilities
@@ -239,7 +243,7 @@ findnewid() {
             path=$(taskpath "$1")/$dir
         fi
     fi
-    lastid=$(ls $path 2>/dev/null | grep "^[0-9]*$" | wc -l)
+    lastid=$(ls $path 2>/dev/null | grep "^[0-9]*$" | sort -n | tail -1)
     newid=$((lastid+1))
     if [[ -v error ]] ; then 
         echo "$error"
